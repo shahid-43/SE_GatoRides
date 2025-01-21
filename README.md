@@ -1,9 +1,11 @@
 # SE_GatoRides
-# Team Members
-* FrontEnd:
-Dhanush Kumar Reddy Gujjula, Venkata Sandeep Macha
-* Backend:
-Shahid Shareef Mohammad, Hareendra Sri Nag Nerusu
+## Team Members
+## FrontEnd:
+**Dhanush Kumar Reddy Gujjula**   
+**Venkata Sandeep Macha**
+## Backend:
+**Shahid Shareef Mohammad**   
+**Hareendra Sri Nag Nerusu**
 # Description
 GatoRides is an effective car ride-sharing platform that aims to disrupt the mobility industry in cities. It features an open application where on one side, people are able to make a request on where to be picked from, and on the other side, drivers can make themselves available and request passengers from wherever they are based.
 The proposed app intends to allow passengers to find drivers nearby who are going the same route to offer cheap and convenient services. GatoRides allows users to become both riders, and drivers at the same time, and as such, ensures that the usage of the service is flexible, inclusive, and based on mutual cooperation.
