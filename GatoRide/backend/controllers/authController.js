@@ -91,22 +91,55 @@ const login = async (req, res) => {
     }
 
     // Generate a JWT token
-    const payload = { user: { id: user.id } };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const accessToken = jwt.sign(
+      { user: { id: user.id } },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
 
-    // Set token in HTTP-Only cookie
-    res.cookie("token", token, {
-      httpOnly: true,      // Prevent JavaScript access
-      secure: true,        // Works only on HTTPS (set to false for local dev)
-      sameSite: "Strict",  // Prevent CSRF attacks
-      maxAge: 3600000,     // 1 hour expiration
+    // ✅ Generate Refresh Token (expires in 7 days)
+    const refreshToken = jwt.sign(
+      { user: { id: user.id } },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // ✅ Store Refresh Token in HTTP-Only Cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    res.json({ msg: "Login successful!" });
+    res.json({ accessToken });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 };
 
-export default { signup, verifyEmail, login };
+const refreshAccessToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({ msg: "No refresh token, please login" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    
+    // Generate new Access Token
+    const accessToken = jwt.sign(
+      { user: { id: decoded.user.id } },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.json({ accessToken });
+  } catch (err) {
+    res.status(401).json({ msg: "Invalid refresh token, please login" });
+  }
+};
+
+export default { signup, verifyEmail, login, refreshAccessToken };
