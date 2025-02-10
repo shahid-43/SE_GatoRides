@@ -23,7 +23,11 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await login(email, password);
+      const loginData = {
+        email: email,
+        password: password
+      };
+      const response = await login(loginData);
       setUser(response.user);
       localStorage.setItem('user', JSON.stringify(response.user));
       navigate('/dashboard');
@@ -34,12 +38,20 @@ export const AuthProvider = ({ children }) => {
 
   const handleSignup = async (name, email, username, password) => {
     try {
-      await signup(name, email, username, password);
+      const userData = {
+        name: name,
+        email: email,
+        username: username,
+        password: password
+      };
+  
+      await signup(userData); // Ensure signup function correctly sends JSON
       navigate('/login');
     } catch (error) {
-      console.error(error);
+      console.error("Signup Error:", error);
     }
   };
+  
 
   const handleVerifyEmail = async (token) => {
     try {
