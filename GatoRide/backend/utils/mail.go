@@ -27,5 +27,5 @@ func SendVerificationEmail(email, verificationToken string) error {
 	}
 
 	fmt.Println("Verification email sent successfully to:", email)
-	return nil
+	return nil
 }

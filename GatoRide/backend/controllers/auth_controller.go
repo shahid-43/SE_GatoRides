@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-auth/config"
-	"github.com/go-auth/models"
-	"github.com/go-auth/utils"
+	"backend/config"
+	"backend/models"
+	"backend/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -116,5 +117,5 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	token, _ := utils.GenerateJWT(user.Username)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
