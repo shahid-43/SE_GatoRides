@@ -19,6 +19,8 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.warn(formData);
+      console.warn(handleSignup);
       await handleSignup(formData.name, formData.email, formData.username, formData.password);
       alert('Sign up successful! Please check your email for verification.');
     } catch (error) {

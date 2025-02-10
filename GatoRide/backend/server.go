@@ -1,13 +1,14 @@
 package main
 
 import (
+	"backend/config"
+	"backend/routes"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"backend/config"
-	"backend/routes"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -18,9 +19,13 @@ func main() {
 	if port == "" {
 		port = "5000"
 	}
-
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"http://localhost:3000"}),                   // Allow frontend
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), // Allow methods
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),           // Allow headers
+	)
 	fmt.Println("Server running on port", port)
-	fmt.Println("http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	fmt.Println("http://localhost:5001")
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler(router)))
 
 }
