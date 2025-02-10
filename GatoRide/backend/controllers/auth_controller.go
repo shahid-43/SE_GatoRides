@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"backend/config"
@@ -25,10 +26,23 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	collection := config.GetCollection("users")
 
 	// Check if email or username already exists
+
 	var existingUser models.User
-	err = collection.FindOne(context.TODO(), bson.M{"$or": []bson.M{{"email": user.Email}, {"username": user.Username}}}).Decode(&existingUser)
-	if err == nil {
-		http.Error(w, "Email or Username already exists", http.StatusConflict)
+	err = collection.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&existingUser)
+	emailExists := err == nil // If no error, email already exists
+
+	err = collection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&existingUser)
+	usernameExists := err == nil // If no error, username already exists
+
+	// Return precise error messages
+	if emailExists && usernameExists {
+		http.Error(w, "Email and Username already exist", http.StatusConflict)
+		return
+	} else if emailExists {
+		http.Error(w, "Email already exists", http.StatusConflict)
+		return
+	} else if usernameExists {
+		http.Error(w, "Username already exists", http.StatusConflict)
 		return
 	}
 
@@ -62,22 +76,60 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 // Verify Email
 func VerifyEmail(w http.ResponseWriter, r *http.Request) {
-	token := r.URL.Query().Get("token")
+	log.Println("Received email verification request.")
 
+	// Extract token from query params
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		log.Println("Error: Missing verification token in request.")
+		http.Error(w, "Missing verification token", http.StatusBadRequest)
+		return
+	}
+	log.Println("Verification token received:", token)
+
+	// Verify token and extract email
 	email, err := utils.VerifyToken(token)
 	if err != nil {
+		log.Println("Error verifying token:", err)
 		http.Error(w, "Invalid or expired token", http.StatusBadRequest)
 		return
 	}
+	log.Println("Token successfully verified. Email:", email)
 
+	// Get the users collection
 	collection := config.GetCollection("users")
 
-	_, err = collection.UpdateOne(context.TODO(), bson.M{"email": email}, bson.M{"$set": bson.M{"is_verified": true}})
+	// Find user by email
+	var user bson.M
+	err = collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
 	if err != nil {
+		log.Println("Error: No user found with the given email:", email, err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	log.Println("User found in database:", user)
+
+	// Check if the user is already verified
+	if user["is_verified"] == true {
+		log.Println("User already verified:", email)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Email already verified."})
+		return
+	}
+
+	// Update user verification status
+	updateResult, err := collection.UpdateOne(context.TODO(), bson.M{"email": email}, bson.M{"$set": bson.M{"is_verified": true}})
+	if err != nil {
+		log.Println("Error updating user verification status:", err)
 		http.Error(w, "Error verifying email", http.StatusInternalServerError)
 		return
 	}
 
+	// Log update result
+	log.Println("Update Result:", updateResult)
+
+	// Send successful response
+	log.Println("Email successfully verified for:", email)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Email verified successfully."})
 }

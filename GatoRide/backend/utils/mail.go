@@ -14,7 +14,7 @@ func SendVerificationEmail(email, verificationToken string) error {
 
 	to := []string{email}
 	subject := "Verify Your Email"
-	body := fmt.Sprintf("Click the link to verify your email: http://localhost:8080/verify-email?token=%s", verificationToken)
+	body := fmt.Sprintf("Click the link to verify your email: http://localhost:5001/verify-email?token=%s", verificationToken)
 
 	message := []byte("Subject: " + subject + "\r\n" + "\r\n" + body + "\r\n")
 
