@@ -1,19 +1,15 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:5000/api/auth'; 
-export const signup = async (name, email, username, password) => {
-  const response = await axios.post(`${API_URL}/signup`, { name, email, username, password });
-  return response.data;
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+export const signup = async (userData) => {
+  return axios.post(`${API_BASE_URL}${process.env.REACT_APP_SIGNUP_ENDPOINT}`, userData);
 };
-export const login = async (email, password) => {
-  const response = await axios.post(`${API_URL}/login`, { email, password });
-  const { token, message } = response.data;
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    return { user: { email, token }, message };
-  }
-  throw new Error(message);
+
+export const login = async (userData) => {
+  return axios.post(`${API_BASE_URL}${process.env.REACT_APP_LOGIN_ENDPOINT}`, userData);
 };
+
 export const verifyEmail = async (token) => {
-  const response = await axios.get(`${API_URL}/verify-email/${token}`);
-  return response.data;
+  return axios.get(`${API_BASE_URL}${process.env.REACT_APP_VERIFY_EMAIL_ENDPOINT}?token=${token}`);
 };
