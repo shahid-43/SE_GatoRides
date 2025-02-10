@@ -11,6 +11,6 @@ func SetupRoutes() *mux.Router {
 
 	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
 	router.HandleFunc("/login", controllers.Login).Methods("POST")
-
+	router.HandleFunc("/verify-login", controllers.Login).Methods("GET")
 	return router
 }
