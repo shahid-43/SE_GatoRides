@@ -125,10 +125,10 @@ Users should only access protected routes if they provide a valid JWT token.
 ### **Frontend Demo Video - [video](https://drive.google.com/file/d/1MXSEfQ2GfEedOzZUHVvQT9oqCgA0qyr_/view?usp=drive_link)**
 
 ## **Sprint Goal:**
-**successfully implemented the intuitive, responsive user interface* for GatoRides with *seamless authentication flow, and consistent theme system**.
+**successfully implemented the intuitive, responsive user interface* for GatoRides with *seamless authentication flow, and consistent theme system**
 
-## **planned but not implemented**
-**user story 3 was not completely implemented as the dashboard component was partially written and we plan to display the user information on the dashboard after successful verification in the future sprints**.
+## **Planned but not implemented**
+**User story 3 was not completely implemented as the dashboard component was partially written and we plan to display the user information on the dashboard after successful verification in the future sprints**.
 
 ## **Issues**
 
