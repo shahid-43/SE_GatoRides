@@ -49,10 +49,27 @@
 - [x] Return appropriate error messages if credentials are incorrect or the user is not verified.
 
 ---
+## **User Story 4: Middleware for Protected Routes**
+
+**Summary**
+Users should only access protected routes if they provide a valid JWT token.
+
+**Acceptance Criteria**
+- Any protected API should require a valid JWT token in the `Authorization` header.
+- If the token is missing or invalid, the request should be denied.
+
+### **Tasks**
+- [x] Implement `AuthMiddleware` to validate JWT tokens.
+- [x] Parse JWT and extract the user's identity.
+- [x] Apply middleware to protected routes like `/profile`, `/rides`, etc.
+---
 
 ### **Backend Demo Video - [video](https://drive.google.com/drive/folders/1bG-C_ymVRk1-Vz3KoHQRccUUy9I7lS0Z?usp=share_link)**
 
-## **Sprint Goal:**
-Deliver a **secure, production-ready authentication system** for GatoRides with **signup, email verification, login, and JWT-based authentication**.
+## **Sprint Goal: successfully implemented**
+**successfully implemented the stories 1-3 mentioned above (signup, email verification, login, and JWT-based authentication)**.
+
+## **planned but not implemented**
+**user story 4 was not implemented as we later decided that it will be better to implement after the frontend and backend integration**
 
 
