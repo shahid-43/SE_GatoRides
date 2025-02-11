@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import RouteConfig from './routes/routes';
 import { useLocation } from 'react-router-dom';
+import NavBar from './components/NavBar';
 import './styles.css'; 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
 
   return (
     <div className={`page-container ${getBackgroundClass()}`}>
+      <NavBar />
       <Routes>
         {RouteConfig.map(({ path, component: Component }, index) => (
           <Route key={index} path={path} element={<Component />} />
