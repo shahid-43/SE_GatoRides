@@ -132,20 +132,20 @@ Users should only access protected routes if they provide a valid JWT token.
 
 ## **Issues**
 
-**Issue**: The Routes component requires a BrowserRouter (or HashRouter) to work properly.
+**Issue**: The Routes component requires a BrowserRouter (or HashRouter) to work properly.  
 **Solution**: Wrapped the Routes component inside a BrowserRouter in App.js
 
-**Issue**: ReactDOM.render is deprecated in React 18+
+**Issue**: ReactDOM.render is deprecated in React 18+  
 **Solution**: Replaced ReactDOM.render with createRoot from react-dom/client
 
-**Issue**: handleVerifyEmail modifies user, but user might be null initially.
+**Issue**: handleVerifyEmail modifies user, but user might be null initially.  
 **Solution**: Ensured user is properly defined before updating.
 
-**Issue**: The service relies entirely on environment variables without fallback values. If .env is misconfigured, requests might fail.
+**Issue**: The service relies entirely on environment variables without fallback values. If .env is misconfigured, requests might fail.  
 **Solution**: Added default values.
 
-**Issue**: The verifyEmail function sends the token in a URL query, which could be exposed in logs.
+**Issue**: The verifyEmail function sends the token in a URL query, which could be exposed in logs.  
 **Solution**: Used a POST request with the token in the body.
 
-**Issue**: The login function does not store or use authentication tokens for subsequent requests.
+**Issue**: The login function does not store or use authentication tokens for subsequent requests.  
 **Solution**: Stored the token in localStorage or a state management system.
