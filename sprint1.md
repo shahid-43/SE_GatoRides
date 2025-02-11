@@ -72,4 +72,80 @@ Users should only access protected routes if they provide a valid JWT token.
 ## **planned but not implemented**
 **user story 4 was not implemented as we later decided that it will be better to implement after the frontend and backend integration**
 
+# **Frontend Authentication Implementation System - User Stories**
 
+## **User Story 1: User Interface Layout**
+**Summary:** Implement responsive page layout with navigation and background themes.  
+**Acceptance Criteria:**  
+- Application should have a consistent navigation bar across all pages
+- Each route should have a unique background theme
+- Navigation should reflect user authentication state
+
+### **Tasks:**
+- [x] Create NavBar component with responsive design
+- [x] Implement route-specific background themes
+- [x] Set up protected routes for authenticated users
+- [x] Add responsive CSS breakpoints
+- [x] Implement authentication state context
+
+---
+
+## **User Story 2: Authentication Forms**
+**Summary:** Create user-friendly authentication forms with validation.  
+**Acceptance Criteria:**  
+- User should see clear signup and login forms
+- Forms should validate input before submission
+- Users should receive feedback on submission status
+
+### **Tasks:**
+- [x] Create SignUp component with validation
+- [x] Create Login component with validation
+- [x] Implement form error handling and display
+- [x] Connect forms to backend API endpoints
+
+---
+
+## **User Story 3: User Dashboard**
+**Summary:** Implement personalized dashboard for authenticated users.  
+**Acceptance Criteria:**  
+- User should see their profile information
+- Dashboard should display active rides and history
+- User should be able to edit their profile
+- Dashboard should have quick actions for common tasks
+
+### **Tasks:**
+- [x] Create Dashboard component with profile section
+- [x] Implement ride history display
+- [x] Add profile editing functionality
+- [x] Create quick action buttons
+- [x] Connect dashboard to backend API endpoints
+
+---
+
+### **Frontend Demo Video - [video](https://drive.google.com/file/d/1MXSEfQ2GfEedOzZUHVvQT9oqCgA0qyr_/view?usp=drive_link)**
+
+## **Sprint Goal:**
+**successfully implemented the intuitive, responsive user interface* for GatoRides with *seamless authentication flow, and consistent theme system**.
+
+## **planned but not implemented**
+**user story 3 was not completely implemented as the dashboard component was partially written and we plan to display the user information on the dashboard after successful verification in the future sprints**.
+
+## **Issues**
+
+**Issue**: The Routes component requires a BrowserRouter (or HashRouter) to work properly.
+**Solution**: Wrapped the Routes component inside a BrowserRouter in App.js
+
+**Issue**: ReactDOM.render is deprecated in React 18+
+**Solution**: Replaced ReactDOM.render with createRoot from react-dom/client
+
+**Issue**: handleVerifyEmail modifies user, but user might be null initially.
+**Solution**: Ensured user is properly defined before updating.
+
+**Issue**: The service relies entirely on environment variables without fallback values. If .env is misconfigured, requests might fail.
+**Solution**: Added default values.
+
+**Issue**: The verifyEmail function sends the token in a URL query, which could be exposed in logs.
+**Solution**: Used a POST request with the token in the body.
+
+**Issue**: The login function does not store or use authentication tokens for subsequent requests.
+**Solution**: Stored the token in localStorage or a state management system.
