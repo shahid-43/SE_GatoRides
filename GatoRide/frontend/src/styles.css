@@ -83,15 +83,22 @@ button:hover, .btn:hover {
 }
 .page-container {
   min-height: 100vh;
-  background-size: cover;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   overflow: hidden;
+  position: fixed;
 }
 
 .home-background {
   background-image: url('../public/images/background.jpg');
+  
 }
 
 .signup-background {
@@ -104,4 +111,44 @@ button:hover, .btn:hover {
 
 .login-background {
   background-image: url('../public/images/background.jpg');
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.nav-logo {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-item {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-size: 1.2rem;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
