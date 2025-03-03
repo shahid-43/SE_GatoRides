@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
+	"backend/auth"
 	"backend/config"
 	"backend/models"
 	"backend/utils"
@@ -26,13 +28,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	collection := config.GetCollection("users")
 
 	// Check if email or username already exists
-
 	var existingUser models.User
 	err = collection.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&existingUser)
-	emailExists := err == nil // If no error, email already exists
+	emailExists := err == nil
 
 	err = collection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&existingUser)
-	usernameExists := err == nil // If no error, username already exists
+	usernameExists := err == nil
 
 	// Return precise error messages
 	if emailExists && usernameExists {
@@ -136,6 +137,7 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request) {
 
 // Login User
 func Login(w http.ResponseWriter, r *http.Request) {
+	// Decode request body
 	var creds models.User
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
@@ -146,28 +148,57 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	collection := config.GetCollection("users")
 	var user models.User
 
-	// Check if user exists
+	// Check if user exists in database
 	err = collection.FindOne(context.TODO(), bson.M{"email": creds.Email}).Decode(&user)
 	if err != nil {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
-	// Check password
+	// Verify password
 	if !utils.CheckPasswordHash(creds.Password, user.Password) {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
-	// Check if user is verified
+	// Ensure user is verified before allowing login
 	if !user.IsVerified {
 		http.Error(w, "Please verify your email before logging in.", http.StatusUnauthorized)
 		return
 	}
 
-	// Generate JWT token for authentication
-	token, _ := utils.GenerateJWT(user.Username)
+	// Generate JWT token
+	token, err := auth.GenerateJWT(user.ID.Hex())
+	if err != nil {
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		return
+	}
 
+	// Set token expiration (matching JWT expiration: 24 hours)
+	expirationTime := time.Now().Add(24 * time.Hour).Unix()
+
+	// Create session document
+	session := models.Session{
+		UserID:    user.ID.Hex(),
+		Token:     token,
+		ExpiresAt: expirationTime,
+	}
+
+	// Store session in MongoDB
+	sessionCollection := config.GetCollection("sessions")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err = sessionCollection.InsertOne(ctx, session)
+	if err != nil {
+		http.Error(w, "Failed to store session", http.StatusInternalServerError)
+		return
+	}
+
+	// Send response with token
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Login successful",
+		"token":   token,
+	})
 }

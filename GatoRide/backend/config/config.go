@@ -13,6 +13,14 @@ import (
 
 var DB *mongo.Database
 
+// GetCollection is a function variable that can be overridden in tests
+var GetCollection = func(name string) *mongo.Collection {
+	if DB == nil {
+		return nil
+	}
+	return DB.Collection(name)
+}
+
 func ConnectDB() {
 	err := godotenv.Load()
 	if err != nil {
@@ -27,8 +35,4 @@ func ConnectDB() {
 
 	DB = client.Database(os.Getenv("DB_NAME"))
 	fmt.Println("Connected to MongoDB!")
-}
-
-func GetCollection(name string) *mongo.Collection {
-	return DB.Collection(name)
 }
