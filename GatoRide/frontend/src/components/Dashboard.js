@@ -19,10 +19,10 @@ const Dashboard = () => {
       {user ? (
         <div>
           <h2>User Details</h2>
-          <p><strong>Name:</strong> {user.name}</p>
+          {/* <p><strong>Name:</strong> {user.name}</p> */}
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Status:</strong> {user.verified ? 'Verified ✅' : 'Not Verified ❌'}</p>
+          {/* <p><strong>Status:</strong> {user.verified ? 'Verified ✅' : 'Not Verified ❌'}</p> */}
         </div>
       ) : (
         <p>Loading user information...</p>
