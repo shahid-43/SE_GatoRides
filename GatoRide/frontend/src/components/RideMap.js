@@ -38,8 +38,7 @@ const RideMap = () => {
             }
             throw new Error('Location not found');
         } catch (error) {
-            setError('Location not found. Please try again.');
-            return null;
+            throw new Error('Location not found. Please try again.');
         }
     };
 
@@ -47,12 +46,23 @@ const RideMap = () => {
         e.preventDefault();
         setError('');
         
-        const fromResult = await searchLocation(e.target.from.value);
-        const toResult = await searchLocation(e.target.to.value);
-        
-        if (fromResult && toResult) {
-            setFromLocation(fromResult);
-            setToLocation(toResult);
+        try {
+            const from = e.target.elements.from.value;
+            const to = e.target.elements.to.value;
+
+            if (!from || !to) {
+                return;
+            }
+
+            const fromResult = await searchLocation(from);
+            const toResult = await searchLocation(to);
+
+            if (fromResult && toResult) {
+                setFromLocation(fromResult);
+                setToLocation(toResult);
+            }
+        } catch (error) {
+            setError(error.message);
         }
     };
 
@@ -61,47 +71,41 @@ const RideMap = () => {
             <form onSubmit={handleSubmit} className="location-form">
                 <div className="input-group">
                     <label htmlFor="from">From:</label>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         id="from"
-                        name="from" 
-                        placeholder="Enter pickup location" 
-                        required 
+                        name="from"
+                        placeholder="Enter pickup location"
+                        required
                     />
                 </div>
                 <div className="input-group">
                     <label htmlFor="to">To:</label>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         id="to"
-                        name="to" 
-                        placeholder="Enter destination" 
-                        required 
+                        name="to"
+                        placeholder="Enter destination"
+                        required
                     />
                 </div>
                 <button type="submit" className="search-button">Search Route</button>
             </form>
-            
-            {error && <p className="error-message">{error}</p>}
-
-            <div className="map-container">
-                <MapContainer
-                    center={[29.6516, -82.3248]} // Gainesville coordinates
-                    zoom={13}
-                    style={{ height: '400px', width: '100%' }}
-                >
+            {error && <div className="error-message" role="alert">{error}</div>}
+            <div className="map-container" data-testid="map-container">
+                <MapContainer center={[29.6516, -82.3248]} zoom={13} style={{ height: '400px', width: '100%' }}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
                     {fromLocation && (
                         <Marker position={[fromLocation.lat, fromLocation.lon]}>
-                            <Popup>From: {fromLocation.display_name}</Popup>
+                            <Popup>{fromLocation.display_name}</Popup>
                         </Marker>
                     )}
                     {toLocation && (
                         <Marker position={[toLocation.lat, toLocation.lon]}>
-                            <Popup>To: {toLocation.display_name}</Popup>
+                            <Popup>{toLocation.display_name}</Popup>
                         </Marker>
                     )}
                 </MapContainer>
