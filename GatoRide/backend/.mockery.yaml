@@ -1,0 +1,10 @@
+packages:
+  backend/controllers:
+    include:
+      - .*
+  backend/models:
+    include:
+      - .*
+  backend/utils:
+    include:
+      - .*

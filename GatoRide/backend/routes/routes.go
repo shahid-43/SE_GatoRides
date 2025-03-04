@@ -10,17 +10,19 @@ import (
 func SetupRoutes() *gin.Engine {
 	r := gin.Default()
 
-	r.POST("/signup", gin.WrapF(controllers.Signup))
-	r.POST("/login", gin.WrapF(controllers.Login))
-	r.GET("/verify-email", gin.WrapF(controllers.VerifyEmail))
+	r.POST("/signup", controllers.Signup)
+	r.POST("/login", controllers.Login)
+	r.GET("/verify-email", controllers.VerifyEmail)
 
 	protected := r.Group("/")
 	protected.Use(middlewares.AuthMiddleware())
 	{
-		protected.GET("/home", controllers.HomeHandler)
-		protected.GET("/rides/feed", controllers.FetchRideFeed)
 		protected.POST("/user/provide-ride", controllers.ProvideRide)
 		protected.POST("/users/location", controllers.UpdateUserLocation)
+		protected.GET("/home", controllers.HomeHandler)
+
+		// protected.GET("/rides/feed", controllers.FetchRideFeed)
+
 	}
 
 	return r
