@@ -188,3 +188,5 @@ npm run test:coverage
 3. Chat functionality
 4. Ride history
 5. Advanced route optimization
+
+### **Frontend Demo Video** - [Video](https://drive.google.com/file/d/1Qh8UhJgu-GSZ5W-R1sUsQejCtwFYOlLB/view?usp=drive_link)
