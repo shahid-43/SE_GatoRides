@@ -188,7 +188,3 @@ npm run test:coverage
 3. Chat functionality
 4. Ride history
 5. Advanced route optimization
-
-## License
-
-MIT License - See LICENSE file for details
