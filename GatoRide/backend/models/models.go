@@ -12,7 +12,7 @@ type User struct {
 	Name              string             `bson:"name" json:"name"`
 	Email             string             `bson:"email" json:"email"`
 	Username          string             `bson:"username" json:"username"`
-	Password          string             `bson:"password" json:"-"`
+	Password          string             `bson:"password" json:"password"`
 	IsVerified        bool               `bson:"is_verified" json:"is_verified"`
 	VerificationToken string             `bson:"verification_token" json:"-"`
 	Location          Location           `bson:"location" json:"location"`

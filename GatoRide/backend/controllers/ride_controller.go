@@ -14,9 +14,16 @@ import (
 
 // UpdateUserLocation updates the last known location of a user
 func UpdateUserLocation(c *gin.Context) {
-	userID, exists := c.Get("userID")
+	userIDStr, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// Convert userID from string to ObjectID
+	userID, err := primitive.ObjectIDFromHex(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID format"})
 		return
 	}
 
@@ -27,10 +34,18 @@ func UpdateUserLocation(c *gin.Context) {
 	}
 
 	collection := config.GetCollection("users")
+	filter := bson.M{"_id": userID}
 	update := bson.M{"$set": bson.M{"location": location}}
-	_, err := collection.UpdateOne(context.TODO(), bson.M{"_id": userID}, update)
+
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update location"})
+		return
+	}
+
+	// Debugging: Check if the update was acknowledged
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 

@@ -3,14 +3,15 @@ package utils
 import (
 	"fmt"
 	"net/smtp"
-	"os"
 )
 
-func SendVerificationEmail(email, verificationToken string) error {
-	smtpHost := os.Getenv("SMTP_HOST")
-	smtpPort := os.Getenv("SMTP_PORT")
-	from := os.Getenv("SMTP_EMAIL")
-	password := os.Getenv("SMTP_PASSWORD")
+var SendEmailFunc = SendVerificationEmail
+
+func SendVerificationEmail(email string, verificationToken string) error {
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+	from := "shahidshareef4457@gmail.com"
+	password := "ldvqpjhklisopenq"
 
 	to := []string{email}
 	subject := "Verify Your Email"
