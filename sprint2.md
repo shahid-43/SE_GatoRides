@@ -4,17 +4,17 @@
 The dashboard was implemented with the following key features:  
 
 ### 1. User Authentication Display
-- Shows logged in user details from [`AuthContext`](src/context/AuthContext.js)
+- Shows logged in user details from [`AuthContext`](GatoRide/frontend/src/context/AuthContext.js)
 - Displays email and username dynamically
 - Handles loading states appropriately
 
 ### 2. Ride Map Integration
-- Implemented interactive map using [`RideMap`](src/components/RideMap.js)
+- Implemented interactive map using [`RideMap`](GatoRide/frontend/src/components/RideMap.js)
 - Location search functionality with OpenStreetMap API
 - Visual route plotting between pickup and destination
 
 ### 3. Navigation
-- Integrated with [`NavBar`](src/components/NavBar.js) component
+- Integrated with [`NavBar`](GatoRide/frontend/src/components/NavBar.js) component
 - Protected route handling
 - Logout functionality
 
