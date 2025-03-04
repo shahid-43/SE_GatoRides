@@ -32,12 +32,35 @@ export const AuthProvider = ({ children }) => {
         email: email,
         password: password
       };
+      console.log('Attempting login with:', { email });
       const response = await login(loginData);
-      setUser(response.user);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      console.log('Login response:', response);
+      
+      if (!response || !response.data || !response.data.token) {
+        console.error('Invalid login response structure:', response);
+        return;
+      }
+
+      // Extract token from response
+      const { token } = response.data;
+      
+      // Create user object from token payload
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      console.log('Token payload:', tokenPayload); // Debug log
+
+      const user = {
+        username: tokenPayload.username, // Changed from email to username
+        email: email, // Add email from login attempt
+        token: token
+      };
+
+      console.log('Setting user state with:', user);
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log('LocalStorage after login:', localStorage.getItem('user'));
       navigate('/dashboard');
     } catch (error) {
-      console.error(error);
+      console.error('Login error details:', error);
     }
   };
 
