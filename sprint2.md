@@ -281,9 +281,4 @@ npm run test:coverage
 ✅ Developed and executed unit tests for backend API functions.  
 ✅ Ensured smooth JWT authentication in all API calls.  
 
----
-
-## **Planned but Not Implemented**
-- **Admin feature for listing rides per user** (Deferred to Sprint 3).  
-- **Frontend and backend integration testing** (Postponed until frontend is fully developed).  
 
