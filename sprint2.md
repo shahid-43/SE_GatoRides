@@ -190,3 +190,100 @@ npm run test:coverage
 5. Advanced route optimization
 
 ### **Frontend Demo Video** - [Video](https://drive.google.com/file/d/1Qh8UhJgu-GSZ5W-R1sUsQejCtwFYOlLB/view?usp=drive_link)
+
+
+# **Backend - Sprint 2  [video](https://drive.google.com/drive/folders/1gV2L_kqw48QFacPMA-2njNtdROZgyjAr?usp=drive_link)**
+
+## **User Story 5: Update User Location**
+**Summary:** Users should be able to update their last known location.
+**Acceptance Criteria:**  
+- User should send a `POST /users/location` request with latitude, longitude, and address.
+- The system should validate and update the location in the database.
+- Only authenticated users should be allowed to update their location.
+
+### **Tasks:**
+- [x] Implement `POST /users/location` endpoint.
+- [x] Validate and extract location details from the request body.
+- [x] Update user location in MongoDB.
+- [x] Ensure the request is authenticated using JWT middleware.
+- [x] Return appropriate success/error responses.
+
+---
+
+## **User Story 6: Provide a Ride**
+**Summary:** Users should be able to provide a ride with pickup and dropoff locations.
+**Acceptance Criteria:**  
+- Users should send a `POST /user/provide-ride` request.
+- System should validate the request and store ride details.
+- Duplicate rides from the same driver should not be allowed.
+
+### **Tasks:**
+- [x] Implement `POST /user/provide-ride` endpoint.
+- [x] Validate and extract ride details from request.
+- [x] Ensure a driver cannot create a duplicate ride.
+- [x] Store ride details in the database.
+- [x] Return ride ID upon success.
+
+---
+
+## **User Story 7: Fetch Nearby Rides**
+**Summary:** Users should see a list of available rides near their location.
+**Acceptance Criteria:**  
+- Users should send a `GET /home` request.
+- System should fetch available rides near the user’s location.
+- System should return ride details in JSON format.
+
+### **Tasks:**
+- [x] Implement `GET /home` endpoint.
+- [x] Fetch rides from MongoDB using geospatial queries.
+- [x] Return only rides that are currently open.
+- [x] Ensure the request is authenticated.
+- [x] Return appropriate success/error responses.
+
+---
+
+## **User Story 8: Unit Testing for Backend API**
+**Summary:** Ensure API functionality with comprehensive unit tests.
+**Acceptance Criteria:**  
+- Each API function should have a corresponding unit test.
+- Tests should run against a real database with proper cleanup.
+- Middleware authentication should be handled in test cases.
+
+### **Tasks:**
+- [x] Write unit tests for `POST /users/location`.
+- [x] Write unit tests for `POST /user/provide-ride`.
+- [x] Write unit tests for `GET /home`.
+- [x] Implement helper functions for database cleanup.
+- [x] Ensure tests run successfully with database integration.
+
+---
+
+## **Backend API Documentation**
+
+### **Implemented APIs:**
+1. **`POST /signup`** – User registration with email verification.
+2. **`GET /verify-email`** – Email verification via JWT token.
+3. **`POST /login`** – User authentication and JWT issuance.
+4. **`POST /users/location`** – Update user location.
+5. **`POST /user/provide-ride`** – Allow users to offer rides.
+6. **`GET /home`** – Fetch available nearby rides.
+
+### **Unit Test Coverage:**
+- A 1:1 test-to-function ratio was maintained.
+- Test cases cover both **valid** and **invalid** scenarios.
+- Tests include authentication checks.
+- Database state is cleaned up after each test.
+
+---
+
+## **Sprint 2 Goal: Successfully Implemented**
+✅ Implemented user location updates, ride creation, and ride fetching.  
+✅ Developed and executed unit tests for backend API functions.  
+✅ Ensured smooth JWT authentication in all API calls.  
+
+---
+
+## **Planned but Not Implemented**
+- **Admin feature for listing rides per user** (Deferred to Sprint 3).  
+- **Frontend and backend integration testing** (Postponed until frontend is fully developed).  
+
