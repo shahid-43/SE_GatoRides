@@ -34,44 +34,47 @@ const SignupForm = () => {
   };
 
   const handleLocationSelect = (location) => {
-    // Extract latitude, longitude, and formatted address from the selected location
-    const { lat, lon, display_name } = location;
-
-    // Update formData with latitude, longitude, and address
+    const latitude = parseFloat(location.lat);
+    const longitude = parseFloat(location.lon);
+  
     setFormData({
       ...formData,
-      location: display_name, // This is the address
-      latitude: parseFloat(lat), // Convert latitude to number
-      longitude: parseFloat(lon), // Convert longitude to number
+      location: location.display_name,
+      latitude: latitude,
+      longitude: longitude
     });
-
-    // Hide suggestions dropdown
+  
     setSuggestions([]);
     setShowDropdown(false);
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    // Check formData to ensure all data is being passed
-    console.warn(formData); // Will log the full form data including location, latitude, and longitude
-
-    // Pass all the required data to handleSignup
-    await handleSignup(
-      formData.name,
-      formData.email,
-      formData.username,
-      formData.password,
-      formData.location, 
-      formData.latitude, 
-      formData.longitude 
-    );
-
-    alert('Sign up successful! Please check your email for verification.');
-  } catch (error) {
-    alert('Error during signup');
-  }
-};
+    e.preventDefault();
+    
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      username: formData.username,
+      password: formData.password,
+      location: {
+        address: formData.location,  // Full address as a string
+        latitude: formData.latitude,  // Numeric latitude
+        longitude: formData.longitude // Numeric longitude
+      }
+    };
+  
+    console.warn("Sending Payload:", JSON.stringify(payload, null, 2)); // Debugging step
+  
+    try {
+      await handleSignup(payload);
+      alert('Sign up successful! Please check your email for verification.');
+    } catch (error) {
+      console.error("Signup Error:", error);
+      alert('Error during signup');
+    }
+  };
+  
+  
 
   return (
     <form onSubmit={handleSubmit} className="signup-form">

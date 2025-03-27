@@ -64,13 +64,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleSignup = async (name, email, username, password) => {
+  const handleSignup = async (name, email, username, password, location) => {
     try {
       const userData = {
         name: name,
         email: email,
         username: username,
-        password: password
+        password: password,
+        location: location 
       };
   
       await signup(userData); // Ensure signup function correctly sends JSON
