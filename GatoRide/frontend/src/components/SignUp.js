@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import '../styles.css';  // Import the global styles
+import axios from 'axios';
 const SignupForm = () => {
   const { handleSignup } = useContext(AuthContext);
   const [formData, setFormData] = useState({
@@ -8,9 +9,9 @@ const SignupForm = () => {
     email: '',
     username: '',
     password: '',
-    location: '',
     latitude: null,
-    longitude: null
+    longitude: null,
+    location: ''
   });
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -18,30 +19,34 @@ const SignupForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
+  
     if (name === 'location' && value.length > 2) {
-      // Fetch location suggestions from OpenStreetMap
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${value}`)
+      // Fetch location suggestions from PositionStack
+      fetch(`http://api.positionstack.com/v1/forward?access_key=3c15e1cc65d40b3afb7635dadb08767a&query=${value}`)
         .then(response => response.json())
         .then(data => {
-          setSuggestions(data);
-          setShowDropdown(data.length > 0);
-        });
+          if (data.data) {
+            setSuggestions(data.data);
+            setShowDropdown(data.data.length > 0);
+          }
+        })
+        .catch(error => console.error("Error fetching location data:", error));
     } else if (name === 'location') {
       setSuggestions([]);
       setShowDropdown(false);
     }
   };
+  
 
   const handleLocationSelect = (location) => {
-    const latitude = parseFloat(location.lat);
-    const longitude = parseFloat(location.lon);
+    const latitude = parseFloat(location.latitude);
+    const longitude = parseFloat(location.longitude);
   
     setFormData({
       ...formData,
-      location: location.display_name,
       latitude: latitude,
-      longitude: longitude
+      longitude: longitude,
+      location: location.label  // PositionStack provides a "label" field for the full address
     });
   
     setSuggestions([]);
@@ -50,29 +55,34 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const payload = {
-      name: formData.name,
-      email: formData.email,
-      username: formData.username,
-      password: formData.password,
-      location: {
-        address: formData.location,  // Full address as a string
-        latitude: formData.latitude,  // Numeric latitude
-        longitude: formData.longitude // Numeric longitude
-      }
+        name: formData.name,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        location: {
+            address: formData.location,
+            latitude: formData.latitude ? parseFloat(formData.latitude) : 0,
+            longitude: formData.longitude ? parseFloat(formData.longitude) : 0
+        }
     };
-  
-    console.warn("Sending Payload:", JSON.stringify(payload, null, 2)); // Debugging step
-  
+
+    console.log("🔹 Sending Payload:", JSON.stringify(payload, null, 2));
+
     try {
-      await handleSignup(payload);
-      alert('Sign up successful! Please check your email for verification.');
+        const response = await axios.post("http://localhost:5001/signup", payload, {
+            headers: { "Content-Type": "application/json" }
+        });
+
+        console.log("✅ Signup Response:", response.data);
+        alert("Sign up successful!");
     } catch (error) {
-      console.error("Signup Error:", error);
-      alert('Error during signup');
+        console.error("❌ Signup Error:", error.response?.data || error);
+        alert(`Error during signup: ${error.response?.data?.error || "Unknown error"}`);
     }
-  };
+};
+
   
   
 
