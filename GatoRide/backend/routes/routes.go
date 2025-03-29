@@ -18,7 +18,8 @@ func SetupRoutes() *gin.Engine {
 	protected.Use(middlewares.AuthMiddleware())
 	{
 		protected.POST("/user/provide-ride", controllers.ProvideRide)
-		protected.POST("/users/location", controllers.UpdateUserLocation)
+		protected.POST("/user/location", controllers.UpdateUserLocation)
+		protected.POST("/user/logout", controllers.LogOut)
 		protected.GET("/home", controllers.HomeHandler)
 
 		// protected.GET("/rides/feed", controllers.FetchRideFeed)
