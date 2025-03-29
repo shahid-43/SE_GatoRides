@@ -27,7 +27,7 @@ const RideMap = () => {
     
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=us&state=Florida&limit=5`,
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`,
                 {
                     headers: {
                         'Accept': 'application/json',
