@@ -143,13 +143,13 @@ const RideMap = () => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     />
-                    {fromLocation && (
-                        <Marker position={[fromLocation.lat, fromLocation.lon]}>
+                    {fromLocation && parseFloat(fromLocation.lat) && parseFloat(fromLocation.lon) && (
+                        <Marker position={[parseFloat(fromLocation.lat), parseFloat(fromLocation.lon)]}>
                             <Popup>{fromLocation.display_name}</Popup>
                         </Marker>
                     )}
-                    {toLocation && (
-                        <Marker position={[toLocation.lat, toLocation.lon]}>
+                    {toLocation && parseFloat(toLocation.lat) && parseFloat(toLocation.lon) && (
+                        <Marker position={[parseFloat(toLocation.lat), parseFloat(toLocation.lon)]}>
                             <Popup>{toLocation.display_name}</Popup>
                         </Marker>
                     )}
