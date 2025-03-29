@@ -14,12 +14,20 @@ L.Icon.Default.mergeOptions({
 const RideMap = () => {
     const [fromLocation, setFromLocation] = useState(null);
     const [toLocation, setToLocation] = useState(null);
+    const [fromSuggestions, setFromSuggestions] = useState([]);
+    const [toSuggestions, setToSuggestions] = useState([]);
     const [error, setError] = useState('');
 
-    const searchLocation = async (query) => {
+    // Fetch location suggestions
+    const fetchLocationSuggestions = async (query, setSuggestions) => {
+        if (!query) {
+            setSuggestions([]);
+            return;
+        }
+    
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=us&state=Florida&limit=1`,
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=us&state=Florida&limit=5`,
                 {
                     headers: {
                         'Accept': 'application/json',
@@ -28,42 +36,47 @@ const RideMap = () => {
                 }
             );
             const data = await response.json();
-            
-            if (data.length > 0) {
-                return {
-                    lat: parseFloat(data[0].lat),
-                    lon: parseFloat(data[0].lon),
-                    display_name: data[0].display_name
-                };
+    
+            // Check if data is an array and contains elements
+            if (Array.isArray(data) && data.length > 0) {
+                setSuggestions(data.map((item) => ({
+                    lat: parseFloat(item.lat),
+                    lon: parseFloat(item.lon),
+                    display_name: item.display_name
+                })));
+            } else {
+                setSuggestions([]); // If no results, clear suggestions
             }
-            throw new Error('Location not found');
         } catch (error) {
-            throw new Error('Location not found. Please try again.');
+            console.error('Error fetching location suggestions:', error);
+            setSuggestions([]); // Clear suggestions in case of an error
         }
     };
+    
+    // Handle user typing in input fields
+    const handleInputChange = (e, setSuggestions) => {
+        fetchLocationSuggestions(e.target.value, setSuggestions);
+    };
 
+    // Handle selecting a location from the suggestions
+    const handleSelectLocation = (selectedLocation, setLocation, setSuggestions, inputId) => {
+        setLocation(selectedLocation);
+        setSuggestions([]);
+        document.getElementById(inputId).value = selectedLocation.display_name;
+    };
+
+    // Handle search submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        
-        try {
-            const from = e.target.elements.from.value;
-            const to = e.target.elements.to.value;
 
-            if (!from || !to) {
-                return;
-            }
-
-            const fromResult = await searchLocation(from);
-            const toResult = await searchLocation(to);
-
-            if (fromResult && toResult) {
-                setFromLocation(fromResult);
-                setToLocation(toResult);
-            }
-        } catch (error) {
-            setError(error.message);
+        if (!fromLocation || !toLocation) {
+            setError('Please select valid locations.');
+            return;
         }
+
+        console.log('From:', fromLocation);
+        console.log('To:', toLocation);
     };
 
     return (
@@ -76,9 +89,24 @@ const RideMap = () => {
                         id="from"
                         name="from"
                         placeholder="Enter pickup location"
+                        onChange={(e) => handleInputChange(e, setFromSuggestions)}
                         required
                     />
+                    {fromSuggestions.length > 0 && (
+                        <div className="dropdown-menu">
+                            {fromSuggestions.map((location, index) => (
+                                <div
+                                    key={index}
+                                    className="dropdown-item"
+                                    onClick={() => handleSelectLocation(location, setFromLocation, setFromSuggestions, 'from')}
+                                >
+                                    {location.display_name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
+
                 <div className="input-group">
                     <label htmlFor="to">To:</label>
                     <input
@@ -86,13 +114,30 @@ const RideMap = () => {
                         id="to"
                         name="to"
                         placeholder="Enter destination"
+                        onChange={(e) => handleInputChange(e, setToSuggestions)}
                         required
                     />
+                    {toSuggestions.length > 0 && (
+                        <div className="dropdown-menu">
+                            {toSuggestions.map((location, index) => (
+                                <div
+                                    key={index}
+                                    className="dropdown-item"
+                                    onClick={() => handleSelectLocation(location, setToLocation, setToSuggestions, 'to')}
+                                >
+                                    {location.display_name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
+
                 <button type="submit" className="search-button">Search Route</button>
             </form>
+
             {error && <div className="error-message" role="alert">{error}</div>}
-            <div className="map-container" data-testid="map-container">
+
+            <div className="map-container">
                 <MapContainer center={[29.6516, -82.3248]} zoom={13} style={{ height: '400px', width: '100%' }}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

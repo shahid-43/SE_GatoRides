@@ -3,7 +3,6 @@ import AuthContext from '../context/AuthContext';
 import '../styles.css';  // Import the global styles
 import axios from 'axios';
 const SignupForm = () => {
-  const { handleSignup } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
