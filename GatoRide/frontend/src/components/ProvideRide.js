@@ -137,18 +137,30 @@ const RideRequest = () => {
   // Submit ride request
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");  // Get token from localStorage or context
-    console.log("Token:", token);
+
+    // Get token from user context
+    const token = user?.token; 
+    //console.log("Token:", token);
+
     if (!token) {
         alert("User is not authenticated");
         return;
     }
 
+    // Ensure latitude and longitude are numbers
     const payload = {
-      pickup: rideDetails.pickup,
-      dropoff: rideDetails.dropoff,
-      price: rideDetails.price,
-      date: rideDetails.date,
+        pickup: {
+            ...rideDetails.pickup,
+            latitude: parseFloat(rideDetails.pickup.latitude),
+            longitude: parseFloat(rideDetails.pickup.longitude),
+        },
+        dropoff: {
+            ...rideDetails.dropoff,
+            latitude: parseFloat(rideDetails.dropoff.latitude),
+            longitude: parseFloat(rideDetails.dropoff.longitude),
+        },
+        price: parseFloat(rideDetails.price),
+        // date: rideDetails.date,
     };
 
     try {
