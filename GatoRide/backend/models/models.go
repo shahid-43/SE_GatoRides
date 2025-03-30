@@ -37,24 +37,15 @@ type Location struct {
 
 // Ride represents a ride request
 type Ride struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	DriverID  primitive.ObjectID `bson:"driver_id" json:"driver_id"`
-	Pickup    Location           `bson:"pickup" json:"pickup"`
-	Dropoff   Location           `bson:"dropoff" json:"dropoff"`
-	Status    RideStatus         `bson:"status" json:"status"`
-	Price     float64            `bson:"price" json:"price"`
-	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
+	ID           primitive.ObjectID   `bson:"_id,omitempty" json:"id"`
+	DriverID     primitive.ObjectID   `bson:"driver_id" json:"driver_id"`
+	Pickup       Location             `bson:"pickup" json:"pickup"`
+	Dropoff      Location             `bson:"dropoff" json:"dropoff"`
+	Status       RideStatus           `bson:"status" json:"status"`
+	Price        float64              `bson:"price" json:"price"`
+	CreatedAt    time.Time            `bson:"created_at" json:"created_at"`
+	PassengerIDs []primitive.ObjectID `bson:"passenger_ids,omitempty" json:"passenger_ids,omitempty"`
 }
-
-// type RideFeed struct {
-// 	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-// 	RideID     string             `bson:"ride_id" json:"ride_id"`
-// 	DriverName string             `bson:"driver_name" json:"driver_name"`
-// 	Pickup     Location           `bson:"pickup" json:"pickup"`
-// 	Dropoff    Location           `bson:"dropoff" json:"dropoff"`
-// 	Distance   float64            `bson:"distance" json:"distance"`
-// 	Status     string             `bson:"status" json:"status"`
-// }
 
 type Session struct {
 	UserID    string `json:"user_id"`
