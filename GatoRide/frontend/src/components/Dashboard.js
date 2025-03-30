@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import RideContext from '../context/RideContext';
 import RideMap from './RideMap';
 import '../styles.css';  // Import global styles
 
 const Dashboard = () => {
   const { user, handleLogout } = useContext(AuthContext);
+  const { ridePayload } = useContext(RideContext);
   const navigate = useNavigate();
 
   const logoutHandler = () => {
@@ -14,7 +16,7 @@ const Dashboard = () => {
   };
 
   const handleCreateRide = () => {
-    navigate('/ride-request'); // Navigate to RideRequest page
+    navigate('/ride-request'); // No need to pass setRidePayload
   };
 
   return (
@@ -27,15 +29,21 @@ const Dashboard = () => {
         </div>
 
         <div className="additional-element">
-          <h3>Additional Element</h3>
-          <p>Content for the additional element goes here.</p>
+          <h3>Ride Details</h3>
+          {ridePayload ? (
+            <div>
+              <p><strong>Pickup:</strong> {ridePayload.pickup.address}</p>
+              <p><strong>Dropoff:</strong> {ridePayload.dropoff.address}</p>
+              <p><strong>Price:</strong> ${ridePayload.price}</p>
+              <p><strong>Date:</strong> {ridePayload.date}</p>
+            </div>
+          ) : (
+            <p>No ride details available.</p>
+          )}
         </div>
 
         <div className="actions">
-          {/* Create Ride Button */}
           <button onClick={handleCreateRide} className="btn btn-primary">Create Ride</button>
-
-          {/* Logout Button */}
           <button onClick={logoutHandler} className="btn btn-secondary">Logout</button>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import RouteConfig from './routes/routes';
 import { useLocation } from 'react-router-dom';
+import { RideProvider } from './context/RideContext';
 import NavBar from './components/NavBar';
 import './styles.css'; 
 
@@ -24,6 +25,7 @@ const App = () => {
   };
 
   return (
+    <RideProvider>
     <div className={`page-container ${getBackgroundClass()}`}>
       <NavBar />
       <Routes>
@@ -32,6 +34,7 @@ const App = () => {
         ))}
       </Routes>
     </div>
+    </RideProvider>
   );
 };
 

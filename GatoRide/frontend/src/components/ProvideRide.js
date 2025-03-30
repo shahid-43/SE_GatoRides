@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';  // Ensure axios is imported
 import AuthContext from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import '../styles.css';
+import RideContext from '../context/RideContext';
 
-const RideRequest = () => {
+const ProvideRide = () => {
   const { user } = useContext(AuthContext); // Fetch user data from context
+  const { setRidePayload } = useContext(RideContext); // Use setRidePayload from RideContext
 
   // Initialize ride details with date
   const [rideDetails, setRideDetails] = useState({
@@ -160,7 +163,7 @@ const RideRequest = () => {
             longitude: parseFloat(rideDetails.dropoff.longitude),
         },
         price: parseFloat(rideDetails.price),
-        // date: rideDetails.date,
+//                         date: rideDetails.date,
     };
 
     try {
@@ -173,6 +176,9 @@ const RideRequest = () => {
 
         console.log("✅ Ride Provided:", response.data);
         alert("Ride provided successfully!");
+
+        // Pass the payload back to the Dashboard
+        setRidePayload(payload);
     } catch (error) {
         console.error("❌ Error:", error.response?.data || error);
         alert(`Error: ${error.response?.data?.message || "Unknown error"}`);
@@ -259,4 +265,4 @@ const RideRequest = () => {
   );
 };
 
-export default RideRequest;
+export default ProvideRide;
