@@ -163,7 +163,7 @@ const ProvideRide = () => {
             longitude: parseFloat(rideDetails.dropoff.longitude),
         },
         price: parseFloat(rideDetails.price),
-//                         date: rideDetails.date,
+        date: rideDetails.date,
     };
 
     try {
