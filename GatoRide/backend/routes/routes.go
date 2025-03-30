@@ -20,6 +20,7 @@ func SetupRoutes() *gin.Engine {
 		protected.POST("/user/provide-ride", controllers.ProvideRide)
 		protected.POST("/user/location", controllers.UpdateUserLocation)
 		protected.POST("/user/logout", controllers.LogOut)
+		protected.POST("/user/search-ride", controllers.SearchRides)
 		protected.GET("/home", controllers.HomeHandler)
 
 		// protected.GET("/rides/feed", controllers.FetchRideFeed)
