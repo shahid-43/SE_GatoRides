@@ -14,32 +14,35 @@ const Dashboard = () => {
   };
 
   const handleCreateRide = () => {
-    navigate('/ride-request');  // Navigate to RideRequest page
+    navigate('/ride-request'); // Navigate to RideRequest page
   };
 
   return (
-    <div className="container">
-      <h1>GatoRides Dashboard</h1>
-      <p>Manage your ride-sharing experience effortlessly.</p>
-
-      {user ? (
-        <div>
+    <div className="dashboard-container">
+      <div className="left-column">
+        <div className="user-details">
           <h2>User Details</h2>
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Username:</strong> {user.username}</p>
+        </div>
 
-          <h2>Plan Your Ride</h2>
-          <RideMap />
+        <div className="additional-element">
+          <h3>Additional Element</h3>
+          <p>Content for the additional element goes here.</p>
+        </div>
 
+        <div className="actions">
           {/* Create Ride Button */}
           <button onClick={handleCreateRide} className="btn btn-primary">Create Ride</button>
 
           {/* Logout Button */}
           <button onClick={logoutHandler} className="btn btn-secondary">Logout</button>
         </div>
-      ) : (
-        <p>Loading user information...</p>
-      )}
+      </div>
+
+      <div className="right-column">
+        <RideMap />
+      </div>
     </div>
   );
 };
