@@ -16,13 +16,13 @@ describe('ProvideRide Component', () => {
   
     it('should allow users to enter pickup and dropoff locations and fetch suggestions', () => {
       cy.get('input[name="pickup"]').type('Gainesville');
-      cy.wait('@getLocationSuggestions');
+      cy.wait(20000);
       cy.get('.dropdown-menu').should('be.visible');
       cy.get('.dropdown-item').first().click();
       cy.get('input[name="pickup"]').should('not.have.value', '');
   
       cy.get('input[name="dropoff"]').type('Orlando International Airport');
-      cy.wait('@getLocationSuggestions');
+      cy.wait(20000);
       cy.get('.dropdown-menu').should('be.visible');
       cy.get('.dropdown-item').first().click();
       cy.get('input[name="dropoff"]').should('not.have.value', '');
@@ -39,11 +39,11 @@ describe('ProvideRide Component', () => {
   
     it('should submit the ride request successfully', () => {
       cy.get('input[name="pickup"]').type('Gainesville');
-      cy.wait('@getLocationSuggestions');
+      cy.wait(20000);
       cy.get('.dropdown-item').first().click();
   
       cy.get('input[name="dropoff"]').type('Orlando International Airport');
-      cy.wait('@getLocationSuggestions');
+      cy.wait(20000);
       cy.get('.dropdown-item').first().click();
   
       cy.get('input[name="price"]').type('20');

@@ -25,11 +25,24 @@ const SignupForm = () => {
             .then(response => response.json())
             .then(data => {
                 if (data && Array.isArray(data.features)) {
-                    setSuggestions(data.features.map((feature) => ({
-                        display_name: feature.properties.name || feature.properties.city || feature.properties.country || 'Unknown Location',
-                        lat: feature.geometry.coordinates[1],
-                        lon: feature.geometry.coordinates[0]
-                    })));
+                    setSuggestions(data.features.map((feature) => {
+                        const properties = feature.properties;
+                        const fullAddress = [
+                            properties.name,
+                            properties.street,
+                            properties.postcode,
+                            properties.city,
+                            properties.country
+                        ]
+                            .filter(Boolean) // Remove undefined or null values
+                            .join(', '); // Join with commas
+
+                        return {
+                            display_name: fullAddress || 'Unknown Location',
+                            lat: feature.geometry.coordinates[1],
+                            lon: feature.geometry.coordinates[0]
+                        };
+                    }));
                     setShowDropdown(data.features.length > 0);
                 }
             })
