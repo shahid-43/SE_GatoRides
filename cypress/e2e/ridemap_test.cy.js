@@ -1,5 +1,6 @@
 describe('RideMap Component', () => {
   beforeEach(() => {
+    cy.viewport(2160, 1400); // Set the viewport size for consistent testing
     // Visit the login page
     cy.visit('http://localhost:3000/login');
 
@@ -10,9 +11,6 @@ describe('RideMap Component', () => {
 
     // Wait for the login to complete and navigate to the home page
     cy.url().should('include', '/'); // Ensure the user is redirected to the home page
-
-    // Navigate to the page with the RideMap
-    // cy.contains('Home').click(); // Click the "Home" link or button to navigate to the RideMap page
   });
 
   it('should display suggestions when typing in the "From" input', () => {
@@ -26,7 +24,7 @@ describe('RideMap Component', () => {
         {
           lat: '40.712776',
           lon: '-74.005974',
-          display_name: 'New York, NY, USA',
+          display_name: 'New York, United States',
         },
         {
           lat: '40.73061',
@@ -34,9 +32,10 @@ describe('RideMap Component', () => {
           display_name: 'Brooklyn, NY, USA',
         },
       ],
-    });
+    }).as('getFromSuggestions');
 
-    // Wait for suggestions to appear
+    // Wait for the API response and dropdown to appear
+    cy.wait('@getFromSuggestions');
     cy.get('.dropdown-menu').should('be.visible');
     cy.get('.dropdown-item').should('have.length', 2);
 
@@ -59,9 +58,10 @@ describe('RideMap Component', () => {
           display_name: 'New York, NY, USA',
         },
       ],
-    });
+    }).as('getFromSuggestions');
 
-    // Select the first suggestion
+    // Wait for the API response and dropdown to appear
+    cy.wait('@getFromSuggestions');
     cy.get('.dropdown-item').first().click();
 
     // Verify the input value is updated
@@ -82,9 +82,10 @@ describe('RideMap Component', () => {
           display_name: 'Los Angeles, CA, USA',
         },
       ],
-    });
+    }).as('getToSuggestions');
 
-    // Wait for suggestions to appear
+    // Wait for the API response and dropdown to appear
+    cy.wait('@getToSuggestions');
     cy.get('.dropdown-menu').should('be.visible');
     cy.get('.dropdown-item').should('have.length', 1);
 
@@ -106,9 +107,10 @@ describe('RideMap Component', () => {
           display_name: 'Los Angeles, CA, USA',
         },
       ],
-    });
+    }).as('getToSuggestions');
 
-    // Select the first suggestion
+    // Wait for the API response and dropdown to appear
+    cy.wait('@getToSuggestions');
     cy.get('.dropdown-item').first().click();
 
     // Verify the input value is updated

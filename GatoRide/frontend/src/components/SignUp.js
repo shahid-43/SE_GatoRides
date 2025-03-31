@@ -20,34 +20,40 @@ const SignupForm = () => {
     setFormData({ ...formData, [name]: value });
 
     if (name === 'location' && value.length > 2) {
-      // Fetch location suggestions from OpenStreetMap (Nominatim)
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}&addressdetails=1&limit=5`)
-        .then(response => response.json())
-        .then(data => {
-          setSuggestions(data);
-          setShowDropdown(data.length > 0);
-        })
-        .catch(error => console.error("Error fetching location data:", error));
+        // Fetch location suggestions from Photon API
+        fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(value)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && Array.isArray(data.features)) {
+                    setSuggestions(data.features.map((feature) => ({
+                        display_name: feature.properties.name || feature.properties.city || feature.properties.country || 'Unknown Location',
+                        lat: feature.geometry.coordinates[1],
+                        lon: feature.geometry.coordinates[0]
+                    })));
+                    setShowDropdown(data.features.length > 0);
+                }
+            })
+            .catch(error => console.error("Error fetching location data:", error));
     } else if (name === 'location') {
-      setSuggestions([]);
-      setShowDropdown(false);
+        setSuggestions([]);
+        setShowDropdown(false);
     }
-  };
+};
 
-  const handleLocationSelect = (location) => {
+const handleLocationSelect = (location) => {
     const latitude = parseFloat(location.lat);
     const longitude = parseFloat(location.lon);
 
     setFormData({
-      ...formData,
-      latitude: latitude,
-      longitude: longitude,
-      location: location.display_name  // Nominatim returns a "display_name" field for the full address
+        ...formData,
+        latitude: latitude,
+        longitude: longitude,
+        location: location.display_name
     });
 
     setSuggestions([]);
     setShowDropdown(false);
-  };
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();

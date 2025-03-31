@@ -35,31 +35,37 @@ const ProvideRide = () => {
   // Fetch location suggestions for dropoff address
   const fetchLocationSuggestions = async (query, type) => {
     if (!query) {
-      if (type === 'pickup') {
-        setPickupSuggestions([]);
-      } else {
-        setDropoffSuggestions([]);
-      }
-      return;
+        if (type === 'pickup') {
+            setPickupSuggestions([]);
+        } else {
+            setDropoffSuggestions([]);
+        }
+        return;
     }
 
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
+        const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
 
-      if (type === 'pickup') {
-        setPickupSuggestions(data.slice(0, 5).map((item) => item.display_name));
-        setShowPickupDropdown(true);
-      } else {
-        setDropoffSuggestions(data.slice(0, 5).map((item) => item.display_name));
-        setShowDropoffDropdown(true);
-      }
+        if (data && Array.isArray(data.features)) {
+            const suggestions = data.features.map((feature) => ({
+                display_name: feature.properties.name || feature.properties.city || feature.properties.country || 'Unknown Location',
+                lat: feature.geometry.coordinates[1],
+                lon: feature.geometry.coordinates[0]
+            }));
+
+            if (type === 'pickup') {
+                setPickupSuggestions(suggestions);
+                setShowPickupDropdown(suggestions.length > 0);
+            } else {
+                setDropoffSuggestions(suggestions);
+                setShowDropoffDropdown(suggestions.length > 0);
+            }
+        }
     } catch (error) {
-      console.error('Error fetching location suggestions:', error);
+        console.error('Error fetching location suggestions:', error);
     }
-  };
+};
 
   // Handle pickup location input change
   const handlePickupLocationChange = (e) => {
@@ -84,42 +90,41 @@ const ProvideRide = () => {
   };
 
   // Handle selecting a location from suggestions (pickup or dropoff)
-  const handleLocationSelect = async (selectedAddress, type) => {
-    // Fetch latitude and longitude for the selected address
-    const locationData = await fetchLocationData(selectedAddress);
+  const handleLocationSelect = (selectedLocation, type) => {
+    const { display_name, lat, lon } = selectedLocation;
+
     if (type === 'pickup') {
-      setRideDetails((prevDetails) => ({
-        ...prevDetails,
-        pickup: { address: selectedAddress, latitude: locationData.latitude, longitude: locationData.longitude },
-      }));
-      setPickupSuggestions([]);
-      setShowPickupDropdown(false);
+        setRideDetails((prevDetails) => ({
+            ...prevDetails,
+            pickup: { address: display_name, latitude: lat, longitude: lon },
+        }));
+        setPickupSuggestions([]);
+        setShowPickupDropdown(false);
     } else {
-      setRideDetails((prevDetails) => ({
-        ...prevDetails,
-        dropoff: { address: selectedAddress, latitude: locationData.latitude, longitude: locationData.longitude },
-      }));
-      setDropoffSuggestions([]);
-      setShowDropoffDropdown(false);
+        setRideDetails((prevDetails) => ({
+            ...prevDetails,
+            dropoff: { address: display_name, latitude: lat, longitude: lon },
+        }));
+        setDropoffSuggestions([]);
+        setShowDropoffDropdown(false);
     }
-  };
+};
 
   // Fetch location data (latitude, longitude) from OpenStreetMap API
   const fetchLocationData = async (address) => {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
-      );
-      const data = await response.json();
-      if (data && data[0]) {
-        const { lat, lon } = data[0];
-        return { latitude: lat, longitude: lon };
-      }
+        const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(address)}`);
+        const data = await response.json();
+
+        if (data && data.features && data.features[0]) {
+            const { geometry } = data.features[0];
+            return { latitude: geometry.coordinates[1], longitude: geometry.coordinates[0] };
+        }
     } catch (error) {
-      console.error('Error fetching location data:', error);
+        console.error('Error fetching location data:', error);
     }
     return { latitude: '', longitude: '' };
-  };
+};
 
   // Handle price input change
   const handleChange = (e) => {
@@ -202,15 +207,15 @@ const ProvideRide = () => {
           />
           {showPickupDropdown && pickupSuggestions.length > 0 && (
             <div className="dropdown-menu">
-              {pickupSuggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className="dropdown-item"
-                  onClick={() => handleLocationSelect(suggestion, 'pickup')}
-                >
-                  {suggestion}
-                </div>
-              ))}
+                {pickupSuggestions.map((location, index) => (
+                    <div
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => handleLocationSelect(location, 'pickup')}
+                    >
+                        {location.display_name} {/* Render the display_name property */}
+                    </div>
+                ))}
             </div>
           )}
         </div>
@@ -227,15 +232,15 @@ const ProvideRide = () => {
           />
           {showDropoffDropdown && dropoffSuggestions.length > 0 && (
             <div className="dropdown-menu">
-              {dropoffSuggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className="dropdown-item"
-                  onClick={() => handleLocationSelect(suggestion, 'dropoff')}
-                >
-                  {suggestion}
-                </div>
-              ))}
+                {dropoffSuggestions.map((location, index) => (
+                    <div
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => handleLocationSelect(location, 'dropoff')}
+                    >
+                        {location.display_name} {/* Render the display_name property */}
+                    </div>
+                ))}
             </div>
           )}
         </div>

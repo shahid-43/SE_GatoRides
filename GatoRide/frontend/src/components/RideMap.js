@@ -18,7 +18,7 @@ const RideMap = () => {
     const [toSuggestions, setToSuggestions] = useState([]);
     const [error, setError] = useState('');
 
-    // Fetch location suggestions
+    // Updated fetchLocationSuggestions function to use Photon API
     const fetchLocationSuggestions = async (query, setSuggestions) => {
         if (!query) {
             setSuggestions([]);
@@ -27,25 +27,24 @@ const RideMap = () => {
     
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`,
+                `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}`,
                 {
                     headers: {
                         'Accept': 'application/json',
-                        'User-Agent': 'GatorRides_App/1.0'
                     }
                 }
             );
             const data = await response.json();
     
-            // Check if data is an array and contains elements
-            if (Array.isArray(data) && data.length > 0) {
-                setSuggestions(data.map((item) => ({
-                    lat: parseFloat(item.lat),
-                    lon: parseFloat(item.lon),
-                    display_name: item.display_name
+            // Check if data contains features
+            if (data && Array.isArray(data.features) && data.features.length > 0) {
+                setSuggestions(data.features.map((feature) => ({
+                    lat: feature.geometry.coordinates[1], // Latitude
+                    lon: feature.geometry.coordinates[0], // Longitude
+                    display_name: feature.properties.name || feature.properties.city || feature.properties.country || 'Unknown Location'
                 })));
             } else {
-                setSuggestions([]); // If no results, clear suggestions
+                setSuggestions([]); // Clear suggestions if no results
             }
         } catch (error) {
             // console.error('Error fetching location suggestions:', error);
