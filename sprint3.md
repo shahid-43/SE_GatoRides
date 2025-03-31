@@ -97,5 +97,4 @@ All new functionality (except the partially implemented Book Ride feature) is co
 - Complete the Book Ride functionality with tests
 - Add ride cancellation functionality
 - Implement ride ratings and reviews
-- Add payment integration
 - Develop notification system for ride updates
