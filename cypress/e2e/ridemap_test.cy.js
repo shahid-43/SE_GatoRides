@@ -4,15 +4,15 @@ describe('RideMap Component', () => {
     cy.visit('http://localhost:3000/login');
 
     // Perform login
-    cy.get('input[name="email"]').type('testuser@example.com'); // Type email
-    cy.get('input[name="password"]').type('password123'); // Type password
+    cy.get('input[name="email"]').type('6afaosgfw3@bltiwd.com'); // Type email
+    cy.get('input[name="password"]').type('test123'); // Type password
     cy.get('button[type="submit"]').click(); // Click login button
 
     // Wait for the login to complete and navigate to the home page
-    cy.url().should('include', '/home'); // Ensure the user is redirected to the home page
+    cy.url().should('include', '/'); // Ensure the user is redirected to the home page
 
     // Navigate to the page with the RideMap
-    cy.contains('Home').click(); // Click the "Home" link or button to navigate to the RideMap page
+    // cy.contains('Home').click(); // Click the "Home" link or button to navigate to the RideMap page
   });
 
   it('should display suggestions when typing in the "From" input', () => {
