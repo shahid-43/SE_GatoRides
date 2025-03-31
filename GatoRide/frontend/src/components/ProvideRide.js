@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';  // Ensure axios is imported
 import AuthContext from '../context/AuthContext';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import '../styles.css';
 import RideContext from '../context/RideContext';
 
@@ -254,6 +254,7 @@ const ProvideRide = () => {
         <input
           type="date"
           name="date"
+          placeholder="Enter date"
           value={rideDetails.date}
           onChange={handleDateChange}
           required
