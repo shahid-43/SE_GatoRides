@@ -1,6 +1,6 @@
 describe('ProvideRide Component', () => {
     beforeEach(() => {
-      cy.visit('/ride-request'); // Update with the correct route
+      cy.visit('http://localhost:3000/ride-request'); // Update with the correct route
       cy.intercept('GET', 'https://nominatim.openstreetmap.org/search**', { fixture: 'locationSuggestions.json' }).as('getLocationSuggestions');
       cy.intercept('POST', 'http://localhost:5001/user/ride-request', { statusCode: 200, body: { message: 'Ride provided successfully!' } }).as('provideRide');
     });
@@ -15,13 +15,13 @@ describe('ProvideRide Component', () => {
     });
   
     it('should allow users to enter pickup and dropoff locations and fetch suggestions', () => {
-      cy.get('input[name="pickup"]').type('123 Main St');
+      cy.get('input[name="pickup"]').type('Gainesville');
       cy.wait('@getLocationSuggestions');
       cy.get('.dropdown-menu').should('be.visible');
       cy.get('.dropdown-item').first().click();
       cy.get('input[name="pickup"]').should('not.have.value', '');
   
-      cy.get('input[name="dropoff"]').type('456 Elm St');
+      cy.get('input[name="dropoff"]').type('Orlando International Airport');
       cy.wait('@getLocationSuggestions');
       cy.get('.dropdown-menu').should('be.visible');
       cy.get('.dropdown-item').first().click();
@@ -38,11 +38,11 @@ describe('ProvideRide Component', () => {
     });
   
     it('should submit the ride request successfully', () => {
-      cy.get('input[name="pickup"]').type('123 Main St');
+      cy.get('input[name="pickup"]').type('Gainesville');
       cy.wait('@getLocationSuggestions');
       cy.get('.dropdown-item').first().click();
   
-      cy.get('input[name="dropoff"]').type('456 Elm St');
+      cy.get('input[name="dropoff"]').type('Orlando International Airport');
       cy.wait('@getLocationSuggestions');
       cy.get('.dropdown-item').first().click();
   

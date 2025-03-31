@@ -5,8 +5,8 @@ describe('RideMap Component', () => {
     cy.visit('http://localhost:3000/login');
 
     // Perform login
-    cy.get('input[name="email"]').type('pyp1wy1m9o@dygovil.com'); // Type email
-    cy.get('input[name="password"]').type('test123'); // Type password
+    cy.get('input[name="email"]').type('r60y739794@tidissajiiu.com'); // Type email
+    cy.get('input[name="password"]').type('asdf'); // Type password
     cy.get('button[type="submit"]').click(); // Click login button
 
     // Wait for the login to complete and navigate to the home page
