@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetUserProfile(c *gin.Context) {
@@ -17,9 +18,15 @@ func GetUserProfile(c *gin.Context) {
 		return
 	}
 
+	userID, err := primitive.ObjectIDFromHex(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
 	userCollection := config.GetCollection("users")
 	var user models.User
-	err := userCollection.FindOne(context.TODO(), bson.M{"_id": userIDStr}).Decode(&user)
+	err = userCollection.FindOne(context.TODO(), bson.M{"_id": userID}).Decode(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user profile"})
 		return
@@ -39,10 +46,16 @@ func GetUserRides(c *gin.Context) {
 		return
 	}
 
+	userID, err := primitive.ObjectIDFromHex(userIDStr.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
 	rideCollection := config.GetCollection("rides")
 
 	// Rides offered
-	ridesOfferedCursor, err1 := rideCollection.Find(context.TODO(), bson.M{"driver_id": userIDStr})
+	ridesOfferedCursor, err1 := rideCollection.Find(context.TODO(), bson.M{"driver_id": userID})
 	if err1 != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch offered rides"})
 		return
@@ -50,8 +63,8 @@ func GetUserRides(c *gin.Context) {
 	var ridesOffered []models.Ride
 	_ = ridesOfferedCursor.All(context.TODO(), &ridesOffered)
 
-	// Rides taken (assuming passenger_id field exists)
-	ridesTakenCursor, err2 := rideCollection.Find(context.TODO(), bson.M{"passenger_id": userIDStr})
+	// Rides taken
+	ridesTakenCursor, err2 := rideCollection.Find(context.TODO(), bson.M{"passenger_ids": userID})
 	if err2 != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch taken rides"})
 		return
