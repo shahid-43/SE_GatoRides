@@ -48,7 +48,7 @@ const RideMap = () => {
                 setSuggestions([]); // If no results, clear suggestions
             }
         } catch (error) {
-            console.error('Error fetching location suggestions:', error);
+            // console.error('Error fetching location suggestions:', error);
             setSuggestions([]); // Clear suggestions in case of an error
         }
     };
@@ -80,7 +80,7 @@ const RideMap = () => {
     };
 
     return (
-        <div className="ride-map-container">
+        <div className="ride-map-container" >
             <form onSubmit={handleSubmit} className="location-form">
                 <div className="input-group">
                     <label htmlFor="from">From:</label>
@@ -137,7 +137,7 @@ const RideMap = () => {
 
             {error && <div className="error-message" role="alert">{error}</div>}
 
-            <div className="map-container">
+            <div className="map-container" data-testid="map-container">
                 <MapContainer center={[29.6516, -82.3248]} zoom={13} style={{ height: '400px', width: '100%' }}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
