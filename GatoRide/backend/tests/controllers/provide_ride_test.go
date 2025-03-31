@@ -19,7 +19,7 @@ import (
 )
 
 // 🔹 Mock user ID for authentication
-const mockUserID = "65f2d9e2c0b2a2e6b6b3a1d9" // Replace with a valid ObjectID
+const mockUserID = "65f2d9e2c0b2a2e6b6b3a1d9"
 
 // ✅ **Setup test router with middleware**
 func setupRouter() *gin.Engine {
@@ -28,7 +28,7 @@ func setupRouter() *gin.Engine {
 
 	// Apply authentication middleware
 	router.Use(func(c *gin.Context) {
-		c.Set("userID", mockUserID) // Mock authentication
+		c.Set("userID", mockUserID)
 		c.Next()
 	})
 
@@ -40,7 +40,6 @@ func setupRouter() *gin.Engine {
 func TestProvideRide_Success(t *testing.T) {
 	router := setupRouter()
 
-	// Ride request data
 	requestBody, _ := json.Marshal(map[string]interface{}{
 		"pickup": map[string]interface{}{
 			"latitude":  40.7128,
@@ -63,30 +62,26 @@ func TestProvideRide_Success(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
-	// ✅ Check response status
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	// ✅ Parse response
 	var response map[string]interface{}
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.Nil(t, err)
 	assert.Contains(t, response, "message")
 	assert.Contains(t, response, "ride_id")
 
-	// ✅ Convert ride_id from string to ObjectID
 	rideIDStr := response["ride_id"].(string)
 	rideID, err := primitive.ObjectIDFromHex(rideIDStr)
 	assert.Nil(t, err)
 
-	// ✅ Verify ride exists in the database
 	collection := config.GetCollection("rides")
 	var createdRide models.Ride
 	err = collection.FindOne(context.TODO(), bson.M{"_id": rideID}).Decode(&createdRide)
 	assert.Nil(t, err)
 	assert.Equal(t, createdRide.DriverID.Hex(), mockUserID)
 	assert.Equal(t, 3, createdRide.Seats)
+	assert.WithinDuration(t, time.Now().Add(24*time.Hour), createdRide.Date, time.Hour*24)
 
-	// ✅ Cleanup
 	cleanupTestRide(t, rideID)
 }
 
@@ -113,12 +108,12 @@ func TestProvideRide_Unauthorized(t *testing.T) {
 func TestProvideRide_InvalidData(t *testing.T) {
 	router := setupRouter()
 
-	// Missing pickup/dropoff
 	requestBody, _ := json.Marshal(map[string]interface{}{
 		"pickup":  map[string]interface{}{},
 		"dropoff": map[string]interface{}{},
 		"price":   0,
 		"seats":   0,
+		"date":    "",
 	})
 
 	req, _ := http.NewRequest("POST", "/user/provide-ride", bytes.NewBuffer(requestBody))
@@ -131,7 +126,7 @@ func TestProvideRide_InvalidData(t *testing.T) {
 
 	var response map[string]interface{}
 	json.Unmarshal(w.Body.Bytes(), &response)
-	assert.Contains(t, response["error"], "Invalid pickup/dropoff location, price, seats, or date")
+	assert.Contains(t, response["error"], "Invalid ride data")
 }
 
 // 🛠 **Helper Function: Clean Up Test Ride**
