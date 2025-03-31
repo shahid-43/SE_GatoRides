@@ -19,6 +19,11 @@ const Dashboard = () => {
     navigate('/ride-request'); // No need to pass setRidePayload
   };
 
+  const handleBookRide = (ride) => {
+    console.log(`Booking ride from ${ride.pickup.address} to ${ride.dropoff.address}`);
+    // Add booking logic here
+  };
+
   return (
     <div className="dashboard-container">
       <div className="left-column">
@@ -36,6 +41,7 @@ const Dashboard = () => {
               <p><strong>Dropoff:</strong> {ridePayload.dropoff.address}</p>
               <p><strong>Price:</strong> ${ridePayload.price}</p>
               <p><strong>Date:</strong> {ridePayload.date}</p>
+              <button onClick={() => handleBookRide(ridePayload)} className="btn btn-success">Book Ride</button>
             </div>
           ) : (
             <p>No ride details available.</p>
