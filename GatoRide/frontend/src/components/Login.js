@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import AuthContext from '../context/AuthContext';
 import '../styles.css';  // Import the global styles
 
@@ -9,28 +9,30 @@ import '../styles.css';  // Import the global styles
 //     password: '',
 //   });
 
-  const Login = () => {
-    const { handleLogin } = useContext(AuthContext);  // ✅ Import handleLogin
-    const [formData, setFormData] = useState({
-      email: '',
-      password: ''
-    });
-  
-    const handleChange = (e) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await handleLogin(formData.email, formData.password);
-        alert('Login successful');
-      } catch (error) {
-        alert(error.response?.data?.message || 'Error logging in');
-      }
-    };
+const Login = () => {
+  const { handleLogin } = useContext(AuthContext); // Use handleLogin from context
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  // const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await handleLogin(formData.email, formData.password);
+      alert('Login successful');
+      navigate('/'); // Redirect to the base URL
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error logging in');
+    }
+  };
+
+// const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   try {
   //     console.warn(formData);
