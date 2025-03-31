@@ -67,17 +67,39 @@ func ProvideRide(c *gin.Context) {
 		return
 	}
 
-	// Parse ride request
-	var ride models.Ride
-	if err := c.ShouldBindJSON(&ride); err != nil {
+	// Define a struct to decode only the fields we expect
+	type RideRequest struct {
+		Pickup  models.Location `json:"pickup"`
+		Dropoff models.Location `json:"dropoff"`
+		Price   float64         `json:"price"`
+		Seats   int             `json:"seats"`
+		Date    time.Time       `json:"date"`
+	}
+
+	var rideReq RideRequest
+	if err := c.ShouldBindJSON(&rideReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ride data", "details": err.Error()})
 		return
 	}
 
 	// Validate required fields
-	if ride.Pickup.Latitude == 0 || ride.Pickup.Longitude == 0 || ride.Dropoff.Latitude == 0 || ride.Dropoff.Longitude == 0 || ride.Price <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pickup/dropoff location or price"})
+	if rideReq.Pickup.Latitude == 0 || rideReq.Pickup.Longitude == 0 || rideReq.Dropoff.Latitude == 0 || rideReq.Dropoff.Longitude == 0 || rideReq.Price <= 0 || rideReq.Seats <= 0 || rideReq.Date.IsZero() {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pickup/dropoff location, price, seats, or date"})
 		return
+	}
+
+	// Create ride object
+	ride := models.Ride{
+		ID:           primitive.NewObjectID(),
+		DriverID:     userID,
+		Pickup:       rideReq.Pickup,
+		Dropoff:      rideReq.Dropoff,
+		Status:       models.StatusOpen,
+		Price:        rideReq.Price,
+		Seats:        rideReq.Seats,
+		Date:         rideReq.Date,
+		CreatedAt:    time.Now(),
+		PassengerIDs: []primitive.ObjectID{},
 	}
 
 	// Get MongoDB collection
@@ -100,12 +122,6 @@ func ProvideRide(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": "A similar ride already exists"})
 		return
 	}
-
-	// Assign values to the new ride
-	ride.ID = primitive.NewObjectID()
-	ride.DriverID = userID
-	ride.Status = models.StatusOpen
-	ride.CreatedAt = time.Now()
 
 	// Insert ride into database
 	_, err = collection.InsertOne(ctx, ride)
