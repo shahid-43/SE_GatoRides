@@ -1,3 +1,5 @@
+// book_controller.go (updated with booking alerts)
+
 package controllers
 
 import (
@@ -5,65 +7,103 @@ import (
 	"backend/models"
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// BookRide allows a user to book a ride by ride_id
+// BookRide - Request a ride by adding a booking alert
 func BookRide(c *gin.Context) {
 	userIDStr, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
-	userID, err := primitive.ObjectIDFromHex(userIDStr.(string))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+
+	rideID := c.Query("ride_id")
+	if rideID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing ride ID"})
 		return
 	}
 
-	type Request struct {
-		RideID string `json:"ride_id"`
-	}
-	var req Request
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		return
-	}
-
-	rideID, err := primitive.ObjectIDFromHex(req.RideID)
+	rideObjectID, err := primitive.ObjectIDFromHex(rideID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ride ID"})
 		return
 	}
 
-	ridesCol := config.GetCollection("rides")
-
-	// Check if ride exists
+	rideCollection := config.GetCollection("rides")
 	var ride models.Ride
-	err = ridesCol.FindOne(context.TODO(), bson.M{"_id": rideID}).Decode(&ride)
+	err = rideCollection.FindOne(context.TODO(), bson.M{"_id": rideObjectID}).Decode(&ride)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Ride not found"})
 		return
 	}
 
-	// Check if already booked
-	for _, passengerID := range ride.PassengerIDs {
-		if passengerID == userID {
-			c.JSON(http.StatusConflict, gin.H{"error": "Already booked this ride"})
-			return
-		}
-	}
-
-	// Update ride with new passenger
-	update := bson.M{"$push": bson.M{"passenger_ids": userID}}
-	_, err = ridesCol.UpdateOne(context.TODO(), bson.M{"_id": rideID}, update)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to book ride"})
+	if ride.Seats <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No seats available"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Ride booked successfully"})
+	// Add booking alert to a new collection
+	booking := models.BookingAlert{
+		ID:        primitive.NewObjectID(),
+		RideID:    ride.ID,
+		Passenger: userIDStr.(string),
+		DriverID:  ride.DriverID.Hex(),
+		Status:    "pending",
+		CreatedAt: time.Now(),
+	}
+
+	bookingCollection := config.GetCollection("booking_alerts")
+	_, err = bookingCollection.InsertOne(context.TODO(), booking)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send booking request"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Booking request sent to driver. Waiting for confirmation."})
+}
+
+// AcceptBooking - Driver accepts a booking request
+func AcceptBooking(c *gin.Context) {
+	driverIDStr, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	bookingID := c.Query("booking_id")
+	if bookingID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing booking ID"})
+		return
+	}
+
+	bookingObjID, err := primitive.ObjectIDFromHex(bookingID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
+		return
+	}
+
+	bookingCollection := config.GetCollection("booking_alerts")
+	rideCollection := config.GetCollection("rides")
+
+	// Update booking status
+	update := bson.M{"$set": bson.M{"status": "confirmed"}}
+	filter := bson.M{"_id": bookingObjID, "driver_id": driverIDStr}
+	result, err := bookingCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil || result.MatchedCount == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to confirm booking or not authorized"})
+		return
+	}
+
+	// Decrease available seats in the ride
+	booking := models.BookingAlert{}
+	_ = bookingCollection.FindOne(context.TODO(), bson.M{"_id": bookingObjID}).Decode(&booking)
+	rideID := booking.RideID
+	_, _ = rideCollection.UpdateOne(context.TODO(), bson.M{"_id": rideID}, bson.M{"$inc": bson.M{"seats": -1}})
+
+	c.JSON(http.StatusOK, gin.H{"message": "Booking confirmed."})
 }

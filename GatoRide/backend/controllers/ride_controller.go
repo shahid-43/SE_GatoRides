@@ -75,8 +75,8 @@ func ProvideRide(c *gin.Context) {
 	}
 
 	// Validate required fields
-	if ride.Pickup.Latitude == 0 || ride.Pickup.Longitude == 0 || ride.Dropoff.Latitude == 0 || ride.Dropoff.Longitude == 0 || ride.Price <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pickup/dropoff location or price"})
+	if ride.Pickup.Latitude == 0 || ride.Pickup.Longitude == 0 || ride.Dropoff.Latitude == 0 || ride.Dropoff.Longitude == 0 || ride.Price <= 0 || ride.Seats <= 0 || ride.Date.IsZero() {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pickup/dropoff location, price, seats, or date"})
 		return
 	}
 

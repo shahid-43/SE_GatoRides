@@ -15,9 +15,10 @@ import (
 const maxDistance = 0.05 // roughly ~5km range for latitude/longitude
 
 type SearchRideRequest struct {
-	From models.Location `json:"from" binding:"required"`
-	To   models.Location `json:"to" binding:"required"`
-	Date string          `json:"date" binding:"required"` // "YYYY-MM-DD"
+	From  models.Location `json:"from" binding:"required"`
+	To    models.Location `json:"to" binding:"required"`
+	Date  string          `json:"date" binding:"required"`  // "YYYY-MM-DD"
+	Seats int             `json:"seats" binding:"required"` // required number of seats
 }
 
 func isNearby(loc1, loc2 models.Location) bool {
@@ -50,6 +51,7 @@ func SearchRides(c *gin.Context) {
 			"$gte": startOfDay,
 			"$lt":  endOfDay,
 		},
+		"seats": bson.M{"$gte": req.Seats}, // Only consider rides with enough available seats
 	}
 
 	cursor, err := collection.Find(context.TODO(), filter)

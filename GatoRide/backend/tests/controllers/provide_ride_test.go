@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -52,6 +53,8 @@ func TestProvideRide_Success(t *testing.T) {
 			"address":   "Brooklyn, NY",
 		},
 		"price": 25.5,
+		"seats": 3,
+		"date":  time.Now().Add(24 * time.Hour).Format(time.RFC3339),
 	})
 
 	req, _ := http.NewRequest("POST", "/user/provide-ride", bytes.NewBuffer(requestBody))
@@ -81,6 +84,7 @@ func TestProvideRide_Success(t *testing.T) {
 	err = collection.FindOne(context.TODO(), bson.M{"_id": rideID}).Decode(&createdRide)
 	assert.Nil(t, err)
 	assert.Equal(t, createdRide.DriverID.Hex(), mockUserID)
+	assert.Equal(t, 3, createdRide.Seats)
 
 	// ✅ Cleanup
 	cleanupTestRide(t, rideID)
@@ -113,7 +117,8 @@ func TestProvideRide_InvalidData(t *testing.T) {
 	requestBody, _ := json.Marshal(map[string]interface{}{
 		"pickup":  map[string]interface{}{},
 		"dropoff": map[string]interface{}{},
-		"price":   0, // Invalid price
+		"price":   0,
+		"seats":   0,
 	})
 
 	req, _ := http.NewRequest("POST", "/user/provide-ride", bytes.NewBuffer(requestBody))
@@ -126,7 +131,7 @@ func TestProvideRide_InvalidData(t *testing.T) {
 
 	var response map[string]interface{}
 	json.Unmarshal(w.Body.Bytes(), &response)
-	assert.Contains(t, response["error"], "Invalid pickup/dropoff location or price")
+	assert.Contains(t, response["error"], "Invalid pickup/dropoff location, price, seats, or date")
 }
 
 // 🛠 **Helper Function: Clean Up Test Ride**
