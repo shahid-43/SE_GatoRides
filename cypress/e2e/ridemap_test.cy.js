@@ -5,7 +5,7 @@ describe('RideMap Component', () => {
     cy.visit('http://localhost:3000/login');
 
     // Perform login
-    cy.get('input[name="email"]').type('6afaosgfw3@bltiwd.com'); // Type email
+    cy.get('input[name="email"]').type('pyp1wy1m9o@dygovil.com'); // Type email
     cy.get('input[name="password"]').type('test123'); // Type password
     cy.get('button[type="submit"]').click(); // Click login button
 
@@ -24,12 +24,12 @@ describe('RideMap Component', () => {
         {
           lat: '40.712776',
           lon: '-74.005974',
-          display_name: 'New York, United States',
+          display_name: 'New York',
         },
         {
           lat: '40.73061',
           lon: '-73.935242',
-          display_name: 'Brooklyn, NY, USA',
+          display_name: 'Brooklyn',
         },
       ],
     }).as('getFromSuggestions');
