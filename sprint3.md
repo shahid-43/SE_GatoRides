@@ -51,7 +51,7 @@ This document outlines the functionalities implemented during Sprint 3 of the Ga
 ### 3. Ride Management
 
 #### 3.1 Search Ride Functionality
-- **Endpoint**: `POST /rides/search`
+- **Endpoint**: `POST /rides/search-ride`
 - **Description**: Allows users to search for available rides based on location, destination, date, and seats required
 - **Features**:
   - Search by geographical proximity (origin and destination)
@@ -65,7 +65,7 @@ This document outlines the functionalities implemented during Sprint 3 of the Ga
   - Invalid input handling
 
 #### 3.2 Book Ride Functionality (Partial Implementation)
-- **Endpoint**: `POST /rides/book?ride_id=RIDE_ID`
+- **Endpoint**: `POST /rides/book-ride_id`
 - **Description**: Allows users to request to book a ride
 - **Features**:
   - Creates a booking alert for the ride driver
