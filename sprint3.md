@@ -1,7 +1,7 @@
 # Sprint 3 Documentation - [Video](#)
 
 ## Overview
-This document outlines the functionalities implemented during Sprint 3 of the GatoRide application backend.
+This document outlines the functionalities implemented during Sprint 3 of the GatoRide application backend and Frontend.
 
 ## New Features
 
@@ -96,5 +96,53 @@ All new functionality (except the partially implemented Book Ride feature) is co
 ## Future Enhancements
 - Complete the Book Ride functionality with tests
 - Add ride cancellation functionality
+- Implement ride ratings and reviews
+- Develop notification system for ride updates
+
+## Frontend Changes
+
+### 1. Ride Map Integration
+- **Description**: Integrated a dynamic ride map to display ride routes and locations.
+- **Features**:
+  - Displays the route between the origin and destination using a polyline.
+  - Highlights pickup and drop-off points with custom markers.
+  - Interactive map with zoom, pan, and reset functionality.
+- **Implementation**: Added in `frontend/components/RideMap.js`.
+- **Testing**:
+  - Verified map rendering with various route scenarios.
+  - Tested marker placement accuracy for pickup and drop-off points.
+  - Ensured smooth interaction with zoom and pan features.
+
+### 2. Provide Ride Functionality
+- **Description**: Added a frontend interface for users to provide rides.
+- **Features**:
+  - Form to input ride details, including:
+    - Origin and destination (with autocomplete suggestions).
+    - Date and time of the ride.
+  - Integration with backend API to save ride details securely.
+  - Validation for:
+    - Required fields (e.g., origin, destination, date, time).
+    - Input formats (e.g., valid date and time, positive seat count).
+  - Success and error notifications for ride creation.
+- **Implementation**: Added in `frontend/pages/ProvideRide.js`.
+- **Testing**:
+  - Verified form validation for all fields.
+  - Tested successful ride creation with valid inputs.
+  - Ensured proper error handling for invalid or missing inputs.
+  - Simulated API failures to test error notifications.
+
+### 3. Change in Maps API
+- **Description**: Updated the Maps API integration to use a new provider for better performance and additional features.
+- **Features**:
+  - Improved geocoding accuracy for converting addresses to coordinates.
+  - Faster route calculations with optimized algorithms.
+  - Reduced API latency for a smoother user experience.
+- **Implementation**: Updated API calls in `frontend/utils/maps.js`.
+- **Testing**:
+  - Verified geocoding accuracy with various address formats.
+  - Measured API response times to confirm performance improvements.
+  ## Future Enhancements
+- Route highlighting between the from location pin to To location pin
+- book ride implementation
 - Implement ride ratings and reviews
 - Develop notification system for ride updates
