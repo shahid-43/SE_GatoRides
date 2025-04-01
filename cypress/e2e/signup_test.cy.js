@@ -28,7 +28,7 @@ describe('Signup Form Tests', () => {
 
   it('should allow the user to select a location from suggestions', () => {
     cy.get('input[name="location"]').type('New York, United States');
-    cy.wait(20000);
+    cy.wait(10000);
     cy.get('.dropdown-item').first().click();
     cy.get('input[name="location"]').should('not.have.value', '');
   });
