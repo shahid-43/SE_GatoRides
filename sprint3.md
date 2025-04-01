@@ -1,4 +1,6 @@
-# Sprint 3 Documentation - [Video](https://drive.google.com/drive/folders/14aGit5GFDWazu_BC7HtRsW8BOncJuM-U?usp=sharing)
+# Sprint 3 Documentation - 
+
+## Backend [Video](https://drive.google.com/drive/folders/14aGit5GFDWazu_BC7HtRsW8BOncJuM-U?usp=sharing)
 
 ## Overview
 This document outlines the functionalities implemented during Sprint 3 of the GatoRide application backend.
