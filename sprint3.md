@@ -1,4 +1,6 @@
-# Sprint 3 Documentation - [Video](#)
+# Sprint 3 Documentation - 
+
+## Backend [Video](https://drive.google.com/drive/folders/14aGit5GFDWazu_BC7HtRsW8BOncJuM-U?usp=sharing)
 
 ## Overview
 This document outlines the functionalities implemented during Sprint 3 of the GatoRide application backend and Frontend.
@@ -84,7 +86,7 @@ All new functionality (except the partially implemented Book Ride feature) is co
 - Database state verification after operations
 - Authentication and authorization checks
 
-## API Documentation - [Link](#)
+## API Documentation - [Link](https://drive.google.com/drive/folders/14aGit5GFDWazu_BC7HtRsW8BOncJuM-U?usp=sharing)
 
 ## Technical Improvements
 - Enhanced error handling across all endpoints
