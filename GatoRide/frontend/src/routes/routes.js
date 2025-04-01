@@ -3,6 +3,7 @@ import SignUp from '../components/SignUp';
 import Login from '../components/Login';
 import Dashboard from '../components/Dashboard';
 import VerifyEmail from '../components/VerifyEmail';
+import RideRequest from '../components/ProvideRide';
 
 const RouteConfig = [
   {
@@ -21,6 +22,10 @@ const RouteConfig = [
   {
     path: '/dashboard',
     component: Dashboard,
+  },
+  {
+    path: '/ride-request',
+    component: RideRequest,
   },
   {
     path: '/verify-email/:token',
