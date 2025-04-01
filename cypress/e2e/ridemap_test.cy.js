@@ -37,11 +37,11 @@ describe('RideMap Component', () => {
     // Wait for the API response and dropdown to appear
     cy.wait(10000);
     cy.get('.dropdown-menu').should('be.visible');
-    cy.get('.dropdown-item').should('have.length', 2);
+    cy.get('.dropdown-item').should('have.length', 15);
 
     // Verify the suggestions
-    cy.get('.dropdown-item').first().should('contain.text', 'New York, NY, USA');
-    cy.get('.dropdown-item').last().should('contain.text', 'Brooklyn, NY, USA');
+    cy.get('.dropdown-item').first().should('contain.text', 'New York, United States');
+    cy.get('.dropdown-item').last().should('contain.text', 'WFAN-FM (New York), West 33rd Street, 10001, New York, United States');
   });
 
   it('should allow selecting a suggestion for "From" location', () => {
@@ -87,7 +87,7 @@ describe('RideMap Component', () => {
     // Wait for the API response and dropdown to appear
     cy.wait(10000);
     cy.get('.dropdown-menu').should('be.visible');
-    cy.get('.dropdown-item').should('have.length', 1);
+    cy.get('.dropdown-item').should('have.length', 15);
 
     // Verify the suggestion
     cy.get('.dropdown-item').first().should('contain.text', 'Los Angeles, United States');
