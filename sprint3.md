@@ -143,7 +143,38 @@ All new functionality (except the partially implemented Book Ride feature) is co
 - **Testing**:
   - Verified geocoding accuracy with various address formats.
   - Measured API response times to confirm performance improvements.
-  ## Future Enhancements
+
+## Issues and Solutions
+
+### 1. Issue: Inconsistent Geocoding Results
+- **Description**: Users reported inaccurate geocoding results when entering certain addresses, leading to incorrect route calculations.
+- **Solution**: Switched to a new Maps API provider with improved geocoding accuracy. Verified the results with various address formats during testing.
+
+### 2. Issue: Slow Route Calculations
+- **Description**: Route calculations were taking longer than expected, causing delays in displaying the map.
+- **Solution**: Optimized the API calls by using batch processing for geocoding and route calculations. Updated the frontend to handle asynchronous map rendering for a smoother user experience.
+
+### 3. Issue: Validation Errors in Provide Ride Form
+- **Description**: Users encountered validation errors when entering incomplete or incorrectly formatted ride details.
+- **Solution**: Enhanced form validation logic to provide clear error messages for missing or invalid inputs. Added a confirmation modal to allow users to review their details before submission.
+
+### 4. Issue: Missing Test Coverage for Book Ride Feature
+- **Description**: The partially implemented Book Ride functionality lacked unit tests, increasing the risk of undetected bugs.
+- **Solution**: Added test cases to cover edge cases, input validation, and database state verification. Ensured comprehensive test coverage before completing the feature.
+
+### 5. Issue: High API Latency
+- **Description**: Users experienced delays in map rendering due to high latency in API responses.
+- **Solution**: Migrated to a high-performance Maps API provider with reduced latency. Measured and confirmed improved response times during testing.
+
+### 6. Issue: Lack of Ride Ratings and Reviews
+- **Description**: Users were unable to provide feedback on their ride experiences, limiting opportunities for service improvement.
+- **Solution**: Planned the implementation of a ride ratings and reviews system to allow passengers to rate and review their rides and drivers to view feedback.
+
+### 7. Issue: No Route Highlighting
+- **Description**: The map did not visually highlight the route between the origin and destination, making it harder for users to follow the path.
+- **Solution**: Planned to add route highlighting functionality using polylines to clearly display the path between the origin and destination on the map.
+
+## Future Enhancements
 - Route highlighting between the from location pin to To location pin
 - book ride implementation
 - Implement ride ratings and reviews
