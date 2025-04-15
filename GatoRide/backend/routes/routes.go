@@ -2,16 +2,34 @@ package routes
 
 import (
 	"backend/controllers"
+	"backend/middlewares"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes() *mux.Router {
-	router := mux.NewRouter()
+func SetupRoutes() *gin.Engine {
+	r := gin.Default()
 
-	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
-	router.HandleFunc("/login", controllers.Login).Methods("POST")
-	router.HandleFunc("/verify-email", controllers.VerifyEmail).Methods("GET")
+	r.POST("/signup", controllers.Signup)
+	r.POST("/login", controllers.Login)
+	r.GET("/verify-email", controllers.VerifyEmail)
 
-	return router
+	protected := r.Group("/")
+	protected.Use(middlewares.AuthMiddleware())
+	{
+		protected.POST("/user/provide-ride", controllers.ProvideRide)
+		protected.POST("/user/location", controllers.UpdateUserLocation)
+		protected.POST("/user/logout", controllers.LogOut)
+		protected.POST("/user/search-ride", controllers.SearchRides)
+		protected.POST("/user/book-ride", controllers.BookRide)
+		protected.POST("/user/profile", controllers.GetUserProfile)
+		protected.POST("/user/update-profile", controllers.UpdateUserProfile)
+		protected.POST("/user/rides", controllers.GetUserRides)
+		protected.GET("/home", controllers.HomeHandler)
+
+		// protected.GET("/rides/feed", controllers.FetchRideFeed)
+
+	}
+
+	return r
 }
